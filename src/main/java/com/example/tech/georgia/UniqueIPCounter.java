@@ -6,28 +6,23 @@ public class UniqueIPCounter {
     public static void main(String[] args) {
         try {
 
-            String filePath = "/Users/yanderbikovmail.ru/Documents/ProjectsIDE/tech/src/main/resources/unique_ips.txt";
             URL resource = UniqueIPCounter.class.getClassLoader().getResource("files/unique_ips.txt");
 
             if (resource == null) {
-                throw new IllegalArgumentException("Файл не найден!");
+                throw new IllegalArgumentException("File not found");
             }
-            // Start timing
             long startTime = System.currentTimeMillis();
 
-            // Initialize bitset
-            long[] bitset = new long[1 << 26]; // 2^26 longs, total 512MB
+            long[] bitset = new long[1 << 26];
 
             File file = new File(resource.getFile());
 
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Parse the IP address to int
                     int ip = parseIPAddress(line.trim());
-                    // Set the corresponding bit
-                    int index = ip >>> 6; // divide by 64
-                    int bitPosition = ip & 63; // modulo 64
+                    int index = ip >>> 6;
+                    int bitPosition = ip & 63;
                     bitset[index] |= (1L << bitPosition);
                 }
             } catch (IOException e) {
@@ -35,7 +30,6 @@ public class UniqueIPCounter {
                 return;
             }
 
-            // Count the number of bits set in the bitset
             long uniqueCount = 0;
             for (long bits : bitset) {
                 uniqueCount += Long.bitCount(bits);
@@ -51,7 +45,6 @@ public class UniqueIPCounter {
         }
     }
 
-    // Method to parse IPv4 address string to int
     private static int parseIPAddress(String ipAddress) throws NumberFormatException {
         String[] parts = ipAddress.split("\\.");
         if (parts.length != 4) {
